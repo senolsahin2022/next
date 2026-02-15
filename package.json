@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "pages:build": "npx @cloudflare/next-on-pages@1",
+    "pages:build": "npx @cloudflare/next-on-pages@1.11.0",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit"
@@ -72,8 +72,5 @@
     "typescript": "5.2.2",
     "vaul": "^0.9.9",
     "zod": "^3.23.8"
-  },
-  "devDependencies": {
-    "@cloudflare/next-on-pages": "^1.13.10"
   }
 }
