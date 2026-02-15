@@ -1,7 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
-const API_BASE = "https://api.crypto-feed.net";
-const API_SECRET = "PUBLIC_TOKEN_V1";
+const API_BASE = (Deno.env.get("CRYPTO_API_BASE_URL") || "https://api.crypto-feed.net").replace(/\/+$/, "");
+const API_SECRET = Deno.env.get("CRYPTO_API_SECRET") || "PUBLIC_TOKEN_V1";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",

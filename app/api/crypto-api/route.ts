@@ -1,6 +1,6 @@
 export const runtime = 'edge';
 
-const API_BASE = 'https://api.crypto-feed.net';
+const API_BASE = (process.env.CRYPTO_API_BASE_URL || 'https://api.crypto-feed.net').replace(/\/+$/, '');
 const API_SECRET = process.env.CRYPTO_API_SECRET || 'PUBLIC_TOKEN_V1';
 
 function base64url(str: string) {
@@ -37,6 +37,13 @@ export async function POST(req: Request) {
 
     if (!endpoint || typeof endpoint !== 'string') {
       return new Response(JSON.stringify({ error: 'Missing endpoint' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    if (!endpoint.startsWith('/')) {
+      return new Response(JSON.stringify({ error: 'Endpoint must start with "/"' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
       });
