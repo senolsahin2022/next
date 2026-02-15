@@ -11,7 +11,7 @@ function getServerOrigin() {
     (process.env.CF_PAGES_URL ? `https://${process.env.CF_PAGES_URL}` : '') ||
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '') ||
     process.env.URL ||
-    'http://localhost:3000';
+    'https://live.crypto-feed.net';
 
   const normalized = raw.startsWith('http') ? raw : `https://${raw}`;
   return normalized.replace(/\/+$/, '');

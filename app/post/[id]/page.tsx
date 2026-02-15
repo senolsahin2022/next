@@ -22,12 +22,12 @@ function getBaseUrl(): URL {
   const raw =
     process.env.NEXT_PUBLIC_SITE_URL ||
     process.env.NEXT_PUBLIC_APP_URL ||
-    'http://localhost:3000';
+    'https://live.crypto-feed.net';
 
   try {
     return new URL(raw.startsWith('http') ? raw : `https://${raw}`);
   } catch {
-    return new URL('http://localhost:3000');
+    return new URL('https://live.crypto-feed.net');
   }
 }
 
@@ -125,7 +125,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const description =
     (post?.content?.slice?.(0, 160) as string) ||
     `Read this crypto post by ${author} on ${SITE_NAME}. Explore media, hashtags, and engagement details.`;
-  const ogImage = post?.coverLight || post?.coverDark || post?.authorAvatar || `${baseUrl.origin}/og-image.png`;
+  const ogImage = post?.coverLight || post?.coverDark || post?.authorAvatar || `${baseUrl.origin}/og-image.svg`;
 
   return {
     metadataBase: baseUrl,

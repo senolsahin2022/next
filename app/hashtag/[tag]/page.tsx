@@ -22,12 +22,12 @@ function getBaseUrl(): URL {
   const raw =
     process.env.NEXT_PUBLIC_SITE_URL ||
     process.env.NEXT_PUBLIC_APP_URL ||
-    'http://localhost:3000';
+    'https://live.crypto-feed.net';
 
   try {
     return new URL(raw.startsWith('http') ? raw : `https://${raw}`);
   } catch {
-    return new URL('http://localhost:3000');
+    return new URL('https://live.crypto-feed.net');
   }
 }
 
@@ -169,7 +169,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const title = `#${tag} Crypto Posts, Trends and Community Discussion | ${SITE_NAME}`;
   const resultCount = posts.length || relatedHashtags.length;
   const description = `Track #${tag} on ${SITE_NAME}. Explore ${resultCount} related results, live conversations, and crypto market sentiment.`;
-  const ogImage = `${baseUrl.origin}/og-image.png`;
+  const ogImage = `${baseUrl.origin}/og-image.svg`;
 
   return {
     metadataBase: baseUrl,

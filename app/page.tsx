@@ -28,19 +28,19 @@ function getBaseUrl(): URL {
   const raw =
     process.env.NEXT_PUBLIC_SITE_URL ||
     process.env.NEXT_PUBLIC_APP_URL ||
-    'http://localhost:3000';
+    'https://live.crypto-feed.net';
 
   try {
     return new URL(raw.startsWith('http') ? raw : `https://${raw}`);
   } catch {
-    return new URL('http://localhost:3000');
+    return new URL('https://live.crypto-feed.net');
   }
 }
 
 export async function generateMetadata(): Promise<Metadata> {
   const baseUrl = getBaseUrl();
   const title = `${SITE_NAME} - Live Crypto Feed and Trending Discussions`;
-  const ogImage = `${baseUrl.origin}/og-image.png`;
+  const ogImage = `${baseUrl.origin}/og-image.svg`;
 
   return {
     metadataBase: baseUrl,
