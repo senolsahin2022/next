@@ -34,6 +34,7 @@ type FaqItem = {
 };
 
 const SITE_NAME = 'CryptoFeed';
+export const runtime = 'edge';
 
 function getBaseUrl(): URL {
   const raw =

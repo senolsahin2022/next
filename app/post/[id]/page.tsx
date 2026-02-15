@@ -14,6 +14,7 @@ type FaqItem = {
 };
 
 const SITE_NAME = 'CryptoFeed';
+export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
