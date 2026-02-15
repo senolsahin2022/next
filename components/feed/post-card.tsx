@@ -220,7 +220,7 @@ const renderTradingSignal = (signal: any) => {
 };
 
 export function PostCard({ post }: PostCardProps) {
-  const profileId = post.squareAuthorId || post.username || post.authorName || 'unknown';
+  const profileId = post.authorName || 'unknown';
   const displayName = post.authorName || post.displayName || post.username || 'Unknown';
   const avatarUrl = post.authorAvatar || post.avatar || '/placeholder.svg';
 
