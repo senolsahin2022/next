@@ -57,25 +57,27 @@ function getBaseUrl(): URL {
 }
 
 async function getProfileData(id: string): Promise<ProfileData> {
+  let user: any | null = null;
+
   try {
     const userRes = await fetchUser(id);
-    const user = normalizeUserProfile(userRes);
-    const lookupIds = getUserLookupIds(user, id);
-
-    for (const lookupId of lookupIds) {
-      try {
-        const postsRes = await fetchUserList(lookupId);
-        const posts = normalizeUserPosts(postsRes);
-        if (posts.length > 0) return { user, posts };
-      } catch {
-        // Try next id candidate
-      }
-    }
-
-    return { user, posts: [] };
+    user = normalizeUserProfile(userRes);
   } catch {
-    return { user: null, posts: [] };
+    user = null;
   }
+
+  const lookupIds = getUserLookupIds(user, id);
+  for (const lookupId of lookupIds) {
+    try {
+      const postsRes = await fetchUserList(lookupId);
+      const posts = normalizeUserPosts(postsRes);
+      if (posts.length > 0) return { user, posts };
+    } catch {
+      // Try next id candidate
+    }
+  }
+
+  return { user, posts: [] };
 }
 
 function buildDynamicFaq(user: any | null, posts: any[]): FaqItem[] {

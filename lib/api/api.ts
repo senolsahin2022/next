@@ -139,26 +139,49 @@ function isUserLike(item: any) {
   if (!item || typeof item !== 'object') return false;
   return !!(
     item.username ||
+    item.userName ||
+    item.authorName ||
+    item.nickName ||
     item.displayName ||
     item.avatar ||
+    item.authorAvatar ||
+    item.userAvatar ||
     item.squareUid ||
     item.squareAuthorId ||
-    item.uid
+    item.uid ||
+    item.userId
   );
 }
 
 export function normalizeUserProfile(payload: any) {
   const safePayload = safeParse(payload);
   const candidates = [
+    safePayload?.data?.author,
+    safePayload?.data?.account,
     safePayload?.data?.user,
     safePayload?.data?.profile,
+    safePayload?.data?.data?.author,
+    safePayload?.data?.data?.user,
     safePayload?.data?.data,
     safePayload?.data,
+    safePayload?.author,
+    safePayload?.profile,
+    safePayload?.account,
     safePayload?.user,
     safePayload,
   ];
 
-  return candidates.find(isUserLike) || null;
+  const direct = candidates.find(isUserLike);
+  if (direct) return direct;
+
+  const arrays: any[][] = [];
+  collectArrays(safePayload, arrays);
+  for (const arr of arrays) {
+    const found = arr.find(isUserLike);
+    if (found) return found;
+  }
+
+  return null;
 }
 
 export function normalizeUserPosts(payload: any) {
