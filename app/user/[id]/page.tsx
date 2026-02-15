@@ -47,12 +47,12 @@ function getBaseUrl(): URL {
   const raw =
     process.env.NEXT_PUBLIC_SITE_URL ||
     process.env.NEXT_PUBLIC_APP_URL ||
-    'http://localhost:3000';
+    'https://live.crypto-feed.net';
 
   try {
     return new URL(raw.startsWith('http') ? raw : `https://${raw}`);
   } catch {
-    return new URL('http://localhost:3000');
+    return new URL('https://live.crypto-feed.net');
   }
 }
 
