@@ -46,7 +46,7 @@ function normalizePostResponse(payload: any): any | null {
 
   const isPostLike = (item: any) =>
     !!item &&
-    !!item.id &&
+    !!(item.id || item.contentId) &&
     (item.content || item.title || item.authorName || item.username || item.cardType || item.videoVO);
 
   const directCandidates = [

@@ -33,7 +33,7 @@ function normalizePostResponse(payload: any): any | null {
 
   const isPostLike = (item: any) =>
     !!item &&
-    !!item.id &&
+    !!(item.id || item.contentId) &&
     (item.content || item.title || item.authorName || item.username || item.cardType || item.videoVO);
 
   const directCandidates = [
@@ -92,9 +92,26 @@ function adaptPostForCard(raw: any) {
   return {
     ...raw,
     id: raw?.id || raw?.contentId || '',
-    authorName: raw?.authorName || raw?.displayName || raw?.nickName || raw?.username || 'Unknown',
-    authorAvatar: raw?.authorAvatar || raw?.avatar || raw?.userAvatar || '/placeholder.svg',
-    username: raw?.username || raw?.authorName || raw?.displayName || 'unknown',
+    authorName:
+      raw?.authorName ||
+      raw?.displayName ||
+      raw?.nickName ||
+      raw?.author?.name ||
+      raw?.author?.nickName ||
+      raw?.username ||
+      'Unknown',
+    authorAvatar:
+      raw?.authorAvatar ||
+      raw?.avatar ||
+      raw?.userAvatar ||
+      raw?.author?.avatar ||
+      '/placeholder.svg',
+    username:
+      raw?.username ||
+      raw?.author?.username ||
+      raw?.author?.userName ||
+      raw?.squareAuthorId ||
+      'unknown',
     content: normalizedContent,
     date: normalizedDate,
     images: normalizedImages,

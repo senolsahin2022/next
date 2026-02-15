@@ -220,6 +220,9 @@ const renderTradingSignal = (signal: any) => {
 };
 
 export function PostCard({ post }: PostCardProps) {
+  const profileId = post.squareAuthorId || post.username || post.authorName || 'unknown';
+  const displayName = post.authorName || post.displayName || post.username || 'Unknown';
+  const avatarUrl = post.authorAvatar || post.avatar || '/placeholder.svg';
 
 
   const formatNumber = (num: number) => {
@@ -231,7 +234,10 @@ export function PostCard({ post }: PostCardProps) {
 
   const getTimeAgo = () => {
     if (post.date) {
-      return formatDistanceToNow(new Date(post.date * 1000), { addSuffix: true });
+      const ts = typeof post.date === 'number' && post.date > 10_000_000_000
+        ? post.date
+        : post.date * 1000;
+      return formatDistanceToNow(new Date(ts), { addSuffix: true });
     }
     return 'Recently';
   };
@@ -250,11 +256,11 @@ export function PostCard({ post }: PostCardProps) {
       <div className="flex gap-3">
 
         {/* USER AVATAR */}
-        <Link href={`/user/${post.username}`} className="flex-shrink-0">
+        <Link href={`/user/${encodeURIComponent(profileId)}`} className="flex-shrink-0">
           <div className="relative w-12 h-12">
             <Image
-              src={post.authorAvatar || '/placeholder.svg'}
-              alt={post.authorName}
+              src={avatarUrl}
+              alt={displayName}
               fill
               className="rounded-full object-cover"
             />
@@ -266,10 +272,10 @@ export function PostCard({ post }: PostCardProps) {
           {/* HEADER */}
           <div className="flex items-center gap-2 flex-wrap">
             <Link
-              href={`/user/${post.username}`}
+              href={`/user/${encodeURIComponent(profileId)}`}
               className="font-semibold text-white hover:text-green-400 transition-colors"
             >
-              {post.authorName}
+              {displayName}
             </Link>
             {followsYou && <span className="text-green-400 text-xs">• Follows You</span>}
             {isFollowed && <span className="text-blue-400 text-xs">• Following</span>}
