@@ -1,15 +1,23 @@
 import { useQuery } from '@tanstack/react-query';
 
-const EDGE_FUNCTION_URL = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/crypto-api`;
+const supabaseBaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').replace(/\/+$/, '');
+const EDGE_FUNCTION_URL = supabaseBaseUrl
+  ? `${supabaseBaseUrl}/functions/v1/crypto-api`
+  : '/functions/v1/crypto-api';
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 async function fetchData<T>(endpoint: string): Promise<T> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+
+  if (SUPABASE_KEY) {
+    headers.Authorization = `Bearer ${SUPABASE_KEY}`;
+  }
+
   const response = await fetch(EDGE_FUNCTION_URL, {
     method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${SUPABASE_KEY}`,
-      'Content-Type': 'application/json',
-    },
+    headers,
     body: JSON.stringify({ endpoint }),
   });
 
