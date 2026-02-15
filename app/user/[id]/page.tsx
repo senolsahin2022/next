@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+﻿import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
 import { formatDistanceToNow } from 'date-fns';
@@ -319,20 +319,20 @@ export default async function UserPage({ params }: PageProps) {
                     </div>
                     <div>
                       <span className="font-bold text-white">{user.totalFollowerCount || 0}</span>
-                      <span className="ml-1.5 text-neutral-500">Takipçi</span>
+                      <span className="ml-1.5 text-neutral-500">TakipÃ§i</span>
                     </div>
                     <div>
                       <span className="font-bold text-white">
                         {user.totalListedPostCount || posts.length}
                       </span>
-                      <span className="ml-1.5 text-neutral-500">Gönderi</span>
+                      <span className="ml-1.5 text-neutral-500">GÃ¶nderi</span>
                     </div>
                   </div>
 
                   {user.createTime && (
                     <div className="text-sm text-neutral-500 flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
-                      Katılım:{' '}
+                      KatÄ±lÄ±m:{' '}
                       {formatDistanceToNow(new Date(user.createTime), {
                         addSuffix: true,
                         locale: tr,
@@ -343,22 +343,26 @@ export default async function UserPage({ params }: PageProps) {
               </div>
             ) : (
               <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-8 text-neutral-400">
-                Kullanıcı bilgisi alınamadı.
+                KullanÄ±cÄ± bilgisi alÄ±namadÄ±.
               </div>
             )}
 
             <div className="rounded-2xl border border-neutral-800 bg-neutral-950 overflow-hidden">
               <div className="border-b border-neutral-800 px-6 py-4">
-                <h2 className="text-xl font-bold text-white">Gönderiler</h2>
+                <h2 className="text-xl font-bold text-white">GÃ¶nderiler</h2>
               </div>
 
               {posts.length > 0 ? (
                 <div className="divide-y divide-neutral-800">
                   {posts.map((post: any) => {
-                    const timeAgo = formatDistanceToNow(
-                      new Date(post.firstReleaseTime || post.createTime),
-                      { addSuffix: true, locale: tr }
-                    );
+                    const postTimeRaw = post.firstReleaseTime || post.createTime || post.date;
+                    const postTime =
+                      typeof postTimeRaw === 'number' && postTimeRaw < 10_000_000_000
+                        ? postTimeRaw * 1000
+                        : postTimeRaw;
+                    const timeAgo = postTime
+                      ? formatDistanceToNow(new Date(postTime), { addSuffix: true, locale: tr })
+                      : 'recently';
 
                     const hasImage = post.imageList?.length > 0;
                     const hasQuote = !!post.quotedContent;
@@ -372,8 +376,8 @@ export default async function UserPage({ params }: PageProps) {
                       <div key={post.id} className="p-5 hover:bg-neutral-950/40 transition-colors">
                         <div className="flex gap-4">
                           <Image
-                            src={post.avatar || '/default-avatar.png'}
-                            alt={post.displayName || 'Kullanıcı'}
+                            src={post.avatar || post.authorAvatar || '/default-avatar.png'}
+                            alt={post.displayName || 'KullanÄ±cÄ±'}
                             width={48}
                             height={48}
                             className="rounded-full object-cover flex-shrink-0"
@@ -381,10 +385,12 @@ export default async function UserPage({ params }: PageProps) {
 
                           <div className="flex-1 min-w-0">
                             <div className="flex flex-wrap items-center gap-2 mb-1">
-                              <span className="font-bold text-white">{post.displayName}</span>
-                              {isVerified && <span className="text-blue-500 text-sm">Onaylı</span>}
+                              <span className="font-bold text-white">
+                                {post.displayName || post.authorName || post.username || 'Unknown'}
+                              </span>
+                              {isVerified && <span className="text-blue-500 text-sm">OnaylÄ±</span>}
                               <span className="text-neutral-500 text-sm">
-                                @{post.username} . {timeAgo}
+                                @{post.username || 'unknown'} . {timeAgo}
                               </span>
                               {hasLabels && post.userLabels[0] && (
                                 <span className="text-xs bg-neutral-800 text-neutral-300 px-2 py-0.5 rounded-full">
@@ -394,21 +400,21 @@ export default async function UserPage({ params }: PageProps) {
                             </div>
 
                             <p className="text-white mb-3 whitespace-pre-wrap leading-relaxed">
-                              {post.bodyTextOnly}
+                              {post.bodyTextOnly || post.content || post.title || ''}
                             </p>
 
-                            {hasImage && (
+                            {(hasImage || (post.images?.length || 0) > 0) && (
                               <div className="rounded-2xl overflow-hidden border border-neutral-700 mb-3">
                                 <Image
-                                  src={post.imageList[0]}
-                                  alt="Gönderi görseli"
+                                  src={post.imageList?.[0] || post.images?.[0] || '/placeholder.svg'}
+                                  alt="GÃ¶nderi gÃ¶rseli"
                                   width={post.imageMetaList?.[0]?.width || 600}
                                   height={post.imageMetaList?.[0]?.height || 400}
                                   className="w-full h-auto object-cover max-h-[520px]"
                                 />
-                                {post.imageList.length > 1 && (
+                                {(post.imageList?.length || post.images?.length || 0) > 1 && (
                                   <div className="text-xs text-neutral-400 bg-neutral-900/70 px-3 py-1.5">
-                                    +{post.imageList.length - 1} görsel daha
+                                    +{(post.imageList?.length || post.images?.length || 1) - 1} gÃ¶rsel daha
                                   </div>
                                 )}
                               </div>
@@ -419,14 +425,14 @@ export default async function UserPage({ params }: PageProps) {
                                 <p className="text-sm text-neutral-200 mb-2">
                                   {post.quotedContent.bodyTextOnly ||
                                     post.quotedContent.body ||
-                                    'Alıntı içeriği'}
+                                    'AlÄ±ntÄ± iÃ§eriÄŸi'}
                                 </p>
                                 <div className="flex items-center gap-2 text-xs text-neutral-500">
                                   <span>
                                     @{post.quotedContent.username || post.quotedContent.displayName}
                                   </span>
                                   <span>.</span>
-                                  <span>{post.quotedContent.likeCount || 0} beğeni</span>
+                                  <span>{post.quotedContent.likeCount || 0} beÄŸeni</span>
                                 </div>
                               </div>
                             )}
@@ -464,15 +470,19 @@ export default async function UserPage({ params }: PageProps) {
 
                             {hasVideo && (
                               <div className="mb-4 rounded-xl overflow-hidden border border-neutral-700 bg-black">
-                                <video controls className="w-full" poster={post.imageList?.[0] || undefined}>
+                                <video
+                                  controls
+                                  className="w-full"
+                                  poster={post.imageList?.[0] || post.images?.[0] || undefined}
+                                >
                                   <source src={post.videoVO.videoLink} type="video/mp4" />
                                   <source src={post.videoVO.videoLink720p} type="video/mp4" />
                                   <source src={post.videoVO.videoLink480p} type="video/mp4" />
-                                  Tarayıcı video oynatmayı desteklemiyor.
+                                  TarayÄ±cÄ± video oynatmayÄ± desteklemiyor.
                                 </video>
                                 {post.videoVO.videoTimeSeconds > 0 && (
                                   <div className="text-xs text-neutral-400 p-2 bg-neutral-900/70">
-                                    Süre: {Math.floor(post.videoVO.videoTimeSeconds / 60)}:
+                                    SÃ¼re: {Math.floor(post.videoVO.videoTimeSeconds / 60)}:
                                     {(post.videoVO.videoTimeSeconds % 60)
                                       .toString()
                                       .padStart(2, '0')}
@@ -513,7 +523,7 @@ export default async function UserPage({ params }: PageProps) {
                                     rel="noopener noreferrer"
                                     className="hover:text-neutral-300 transition flex items-center gap-1"
                                   >
-                                    <LinkIcon size={14} /> Web'de aç
+                                    <LinkIcon size={14} /> Web'de aÃ§
                                   </a>
                                 )}
                                 {post.shareLink && (
@@ -523,7 +533,7 @@ export default async function UserPage({ params }: PageProps) {
                                     rel="noopener noreferrer"
                                     className="hover:text-neutral-300 transition flex items-center gap-1"
                                   >
-                                    <Share2 size={14} /> Paylaş
+                                    <Share2 size={14} /> PaylaÅŸ
                                   </a>
                                 )}
                               </div>
@@ -535,7 +545,7 @@ export default async function UserPage({ params }: PageProps) {
                   })}
                 </div>
               ) : (
-                <div className="py-16 text-center text-neutral-500">Henüz gönderi yok</div>
+                <div className="py-16 text-center text-neutral-500">HenÃ¼z gÃ¶nderi yok</div>
               )}
             </div>
 
@@ -570,3 +580,4 @@ export default async function UserPage({ params }: PageProps) {
     </>
   );
 }
+
