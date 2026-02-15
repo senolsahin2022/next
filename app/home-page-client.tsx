@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { fetchRecommended } from '@/lib/api/api';
+import { fetchRecommended, normalizeRecommendedPosts } from '@/lib/api/api';
 import { PostCard } from '@/components/feed/post-card';
 import { HotList } from '@/components/feed/hot-list';
 import { Loader2, RefreshCw } from 'lucide-react';
@@ -25,6 +25,8 @@ export default function HomePageClient({ faqItems, initialRecommendedData }: Hom
     queryFn: () => fetchRecommended(page),
     initialData: page === 1 ? initialRecommendedData : undefined,
   });
+
+  const posts = normalizeRecommendedPosts(data);
 
   return (
     <div className="mx-auto max-w-7xl">
@@ -63,17 +65,17 @@ export default function HomePageClient({ faqItems, initialRecommendedData }: Hom
               </div>
             )}
 
-            {!isLoading && !error && data?.data && (
+            {!isLoading && !error && (
               <>
-                {data.data.vos.map((post: any) => (
+                {posts.map((post: any) => (
                   <PostCard key={post.id} post={post} />
                 ))}
 
-                {data.data.vos.length === 0 && (
+                {posts.length === 0 && (
                   <div className="p-8 text-center text-neutral-500">No posts found</div>
                 )}
 
-                {data.data.vos.length > 0 && (
+                {posts.length > 0 && (
                   <div className="flex items-center justify-center gap-4 p-6 border-t border-neutral-800">
                     <button
                       onClick={() => setPage((p) => Math.max(1, p - 1))}

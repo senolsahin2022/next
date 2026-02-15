@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import HomePageClient from './home-page-client';
-import { fetchRecommended } from '@/lib/api/api';
+import { fetchRecommended, normalizeRecommendedPosts } from '@/lib/api/api';
 
 const SITE_NAME = 'CryptoFeed';
 const SITE_DESCRIPTION =
@@ -93,7 +93,7 @@ export default async function HomePage() {
   try {
     const recommendedRes = await fetchRecommended(1);
     initialRecommendedData = recommendedRes;
-    initialPosts = (recommendedRes as any)?.data?.vos || [];
+    initialPosts = normalizeRecommendedPosts(recommendedRes);
   } catch {
     initialRecommendedData = null;
     initialPosts = [];

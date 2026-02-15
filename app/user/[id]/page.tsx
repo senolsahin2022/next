@@ -14,7 +14,13 @@ import {
   Share2,
 } from 'lucide-react';
 import { HotList } from '@/components/feed/hot-list';
-import { fetchUser, fetchUserList } from '@/lib/api/api';
+import {
+  fetchUser,
+  fetchUserList,
+  getUserLookupIds,
+  normalizeUserPosts,
+  normalizeUserProfile,
+} from '@/lib/api/api';
 
 type PageProps = {
   params: {
@@ -34,6 +40,8 @@ type FaqItem = {
 
 const SITE_NAME = 'CryptoFeed';
 export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 function getBaseUrl(): URL {
   const raw =
@@ -51,15 +59,20 @@ function getBaseUrl(): URL {
 async function getProfileData(id: string): Promise<ProfileData> {
   try {
     const userRes = await fetchUser(id);
-    const user = (userRes as any)?.data || null;
+    const user = normalizeUserProfile(userRes);
+    const lookupIds = getUserLookupIds(user, id);
 
-    if (!user?.squareUid) {
-      return { user, posts: [] };
+    for (const lookupId of lookupIds) {
+      try {
+        const postsRes = await fetchUserList(lookupId);
+        const posts = normalizeUserPosts(postsRes);
+        if (posts.length > 0) return { user, posts };
+      } catch {
+        // Try next id candidate
+      }
     }
 
-    const postsRes = await fetchUserList(user.squareUid);
-    const posts = (postsRes as any)?.data?.contents || [];
-    return { user, posts };
+    return { user, posts: [] };
   } catch {
     return { user: null, posts: [] };
   }
