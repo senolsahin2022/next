@@ -1,19 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 
-const supabaseBaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').replace(/\/+$/, '');
 const explicitApiUrl = (process.env.NEXT_PUBLIC_CRYPTO_API_URL || '').replace(/\/+$/, '');
-const EDGE_FUNCTION_URL = explicitApiUrl || (supabaseBaseUrl
-  ? `${supabaseBaseUrl}/functions/v1/crypto-api`
-  : '');
-const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const EDGE_FUNCTION_URL = explicitApiUrl || '/api/crypto-api';
+const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
 async function fetchData<T>(endpoint: string): Promise<T> {
-  if (!EDGE_FUNCTION_URL) {
-    throw new Error(
-      'Missing API base URL: set NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_CRYPTO_API_URL'
-    );
-  }
-
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
   };
