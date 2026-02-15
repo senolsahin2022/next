@@ -1,4 +1,3 @@
-import { cache } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -49,7 +48,7 @@ function getBaseUrl(): URL {
   }
 }
 
-const getProfileData = cache(async (id: string): Promise<ProfileData> => {
+async function getProfileData(id: string): Promise<ProfileData> {
   try {
     const userRes = await fetchUser(id);
     const user = (userRes as any)?.data || null;
@@ -64,7 +63,7 @@ const getProfileData = cache(async (id: string): Promise<ProfileData> => {
   } catch {
     return { user: null, posts: [] };
   }
-});
+}
 
 function buildDynamicFaq(user: any | null, posts: any[]): FaqItem[] {
   const postCount = posts.length;
